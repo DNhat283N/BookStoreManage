@@ -1,6 +1,6 @@
 import math
 from flask import render_template, request, redirect, jsonify, session
-from app import template
+from app import templates
 import dao
 import utils
 import json
@@ -17,12 +17,13 @@ def index():
     page_size = app.config["PAGE_SIZE"]
 
     pro = dao.get_book(kw, cate_id, page)
-    return render_template('HomePage.html', pages=math.ceil(num/page_size), produces=pro)
+    return render_template('index.html', pages=math.ceil(num / page_size), produces=pro)
 
 
 @app.route('/cart')
 def cart():
     return render_template('cart.html')
+
 
 @app.route('/api/cart', methods=['post'])
 def add_to_cart():
@@ -87,12 +88,15 @@ def delete_product(ID_Book):
     session['cart'] = cart
     return jsonify(utils.count_cart(cart))
 
+
 @app.context_processor
 def common_responses():
     return {
         'categories': dao.get_category(),
         'cart_stats': utils.count_cart(session.get('cart'))
     }
+
+
 # @app.route('/user-login', methods=['get', 'post'])
 # def user_signin():
 #     if request.method.__eq__('POST'):
@@ -102,5 +106,6 @@ def common_responses():
 
 
 if __name__ == '__main__':
-    # from app import admin
+    from app import admin
+
     app.run(debug=True)

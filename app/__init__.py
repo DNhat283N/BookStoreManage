@@ -4,9 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 # app = Flask(__name__)
-app = Flask(__name__, template_folder='template')
+app = Flask(__name__, template_folder='templates')
 app.secret_key = "1234567890!@#$%^&*()qwertyuioplkjhgfdsazxcvbnm,./ASDFGHJKLZMXNCBVQWERTYUIOP"
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:%s@localhost/dbproject?charset=utf8mb4" % quote("d@Ikaquan2301")
+app.config["SQLALCHEMY_DATABASE_URI"] = ("mysql+pymysql://root:%s@localhost/dbproject?charset=utf8mb4"
+                                         % quote("Admin@123"))
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 app.config["PAGE_SIZE"] = 2
 
