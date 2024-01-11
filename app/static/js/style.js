@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
 function handleViewDetailClick(name, image, info, overlayId) {
     var detailOverlay = document.getElementById(overlayId);
     detailOverlay.style.display = 'block';
