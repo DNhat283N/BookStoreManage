@@ -55,49 +55,71 @@ function closeDetailOverlay(button) {
         overlay.style.display = 'none';
     }
 }
-
-
-function addToCart(id, name, price){
-    fetch("/api/cart",{
-        method: "post",
-        body: JSON.stringify({
-            "Book_ID": id,
-            "BookName": name,
-            "Price": price
-        }),
-        headers: {
-            'Content-Type': 'application/json'
+function updateCartCounter(data) {
+     let totalQuantity = data.total_quantity
+    let cartCounters = document.getElementsByClassName('cart-counter');
+        for (let counter of cartCounters) {
+            counter.innerText = totalQuantity;
         }
-    }).then(function(res) {
-        return res.json();
-    }).then(function(data) {
-        let carts = document.getElementsByClassName('cart-counter');
-        for (let c of carts)
-            c.innerText = data.total_quantity;
 
-    })
 }
-function addToCart1(id, name, price){
-    fetch("/api/cart",{
-        method: "post",
-        body: JSON.stringify({
-            "Book_ID": id,
-            "BookName": name,
-            "Price": price
-        }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(function(res) {
-        return res.json();
-    }).then(function(data) {
-        let carts = document.getElementsByClassName('cart-counter');
-        for (let c of carts)
-            c.innerText = data.total_quantity;
 
+// Hàm thêm sách vào giỏ hàng
+function addToCart(bookId, bookName, price) {
+    var quantity = 1;
+    $.ajax({
+        url: '/api/cart',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            "Book_ID": bookId,
+            "BookName": bookName,
+            "Price": price,
+            "quantity": quantity
+        }),
+        success: function (response) {
+            if (response.success) {
+                console.log(response.message);// Log thành công
+                updateCartCounter(response.cart);
+            } else {
+                alert(response.error);  // Hiển thị thông báo lỗi
+            }
+        },
+        error: function (xhr, status, error) {
+            // Xử lý lỗi AJAX
+            alert("Không đủ hàng cung cấp.");
+        }
+    });
+}
+
+
+ function addToCart1(bookId, bookName, price) {
+        var quantity = 1;
+        $.ajax({
+            url: '/api/cart',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "Book_ID": bookId,
+                "BookName": bookName,
+                "Price": price,
+                "quantity": quantity
+            }),
+            success: function (response) {
+                if (response.success) {
+                    console.log(response.message);  // Log thành công
+                    updateCartCounter(response.cart);
+                } else {
+                    alert(response.error);  // Hiển thị thông báo lỗi
+                }
+            },
+            error: function (xhr, status, error) {
+                // Xử lý lỗi AJAX
+                alert("Không đủ hàng cung cấp.");
+            }
+        });
         window.location.href = '/cart';
-    })
-}
+    }
 
 function uppDateCart(Book_ID, obj) {
     obj.disable = true;
