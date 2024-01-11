@@ -1,54 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/info.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <title>Document</title>
-</head>
-<body>
-<h1>Nhập Thông Tin Người Dùng</h1>
-    <div class="container">
-        <form method="post" action="/info" enctype="multipart/form-data">
-            <div class="form-detail">
-                <div class="group">
-                    <input class="control-custom" id="Customer_ID" name="Customer_ID" type="number"/>
-                    <span class="bar"></span>
-                    <label for="Customer_ID">Số CCCD</label>
-                </div>
-                <div class="group">
-                    <input class="control-custom" id="FullName" name="FullName" type="text" />
-                    <span class="bar"></span>
-                    <label for="FullName">Họ và Tên</label>
-                </div>
-                <div class="group">
-                    <input class="control-custom" id="Gender" name="Gender" type="text" />
-                    <span class="bar"></span>
-                    <label for="Gender">Giới Tính</label>
-                </div>
-                <div class="group">
-                    <input class="control-custom" id="Phone_Number" name="Phone_Number" type="number" />
-                    <span class="bar"></span>
-                    <label for="Phone_Number">Số ĐT</label>
-                </div>
-                <div class="group">
-                    <input class="control-custom" id="BirthDay" name="BirthDay" type="date" />
-                    <span class="bar"></span>
-                    <label for="BirthDay">Ngày/Tháng/Năm/Sinh</label>
-                </div>
-                <div class="group">
-                    <input class="control-custom" id="Address" name="Address" type="text" />
-                    <span class="bar"></span>
-                    <label for="Address">Địa Chỉ</label>
-                </div>
-            </div>
-            <div class="form-button text-center">
-                <button class="btn btn-info" type="button" >Xác Nhận</button>
-            </div>
-        </form>
-    </div>
-</body>
-</html>
+{% extends 'layout/base.html' %}
 
+{% block title %} Trang chủ {% endblock %}
+
+{% block content %}
+<h1 class="text-center text-info mt-1">Nhập thông tin người dùng</h1>
+
+{% if err_msg %}
+<div class="alert alert-danger">
+{{ err_msg }}
+</div>
+{% endif %}
+
+
+<div class="container">
+    <form method="post" action="/register" enctype="multipart/form-data">
+        <div class="mb-3 mt-3">
+            <label for="Customer_ID" class="form-label">Số CCCD:</label>
+            <input type="number" class="form-control" id="Customer_ID" placeholder="Số CCCD" name="Customer_ID" required="">
+        </div>
+        <div class="mb-3 mt-3">
+            <label for="FullName" class="form-label">Tên đăng nhập:</label>
+            <input type="text" class="form-control" id="FullName" placeholder="Tên đăng nhập" name="FullName" required="">
+        </div>
+        <div class="mb-3">
+            <label for="Gender" class="form-label">Giới Tính:</label>
+            <input type="text" class="form-control" id="Gender" placeholder="Giới Tính" name="Gender" required="">
+        </div>
+        <div class="mb-3">
+            <label for="BirthDay" class="form-label">Ngày/Tháng/Năm sinh:</label>
+            <input type="date" class="form-control" id="BirthDay" placeholder="Ngày/Tháng/Năm sinh" name="BirthDay" required="">
+        </div>
+        <div class="mb-3">
+            <label for="Address" class="form-label">Địa Chỉ</label>
+            <input type="text" class="form-control" id="Address" name="Address" required="">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Xác Nhận</button>
+    </form>
+</div>
+{% endblock%}

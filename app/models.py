@@ -26,7 +26,7 @@ class PersonModel(db.Model):
     __abstract__ = True
     FullName = Column(String(255), nullable=True)
     Gender = Column(String(10), nullable=True)
-    BirthDay = Column(String(50), nullable=False)
+    BirthDay = Column(Date, nullable=False)
 
 
 class Customer(PersonModel):

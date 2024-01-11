@@ -33,7 +33,7 @@
                                 <img class="detailImage" alt="Detail Image">
                                 <p class="detailInfo"></p>
                                 <a href="javascript:;"
-                                   onclick="addToCart1({{p.Book_ID}}, '{{p.BookName}}', {{p.Price}}); window.location.href = '/cart';"
+                                   onclick="addToCart({{p.Book_ID}}, '{{p.BookName}}', {{p.Price}})"
                                    class="btn btn-danger " style="border-radius: 10px">Mua hàng</a>
                                 <p class="quantity-in-took">Số lượng tồn kho: {{ p.QuantityInStock }}</p>
                             </div>

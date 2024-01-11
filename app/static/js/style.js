@@ -54,33 +54,13 @@ function closeDetailOverlay(button) {
         overlay.style.display = 'none';
     }
 }
-function updateCartCounter() {
-    fetch("/api/cart", {
-        method: "POST",  // Sử dụng phương thức POST
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({})  // Gửi dữ liệu trống hoặc dữ liệu không cần thiết
-    })
-    .then(function (res) {
-        if (!res.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return res.json();
-    })
-    .then(function (data) {
-        // Lấy số lượng giỏ hàng từ dữ liệu trả về
-        let totalQuantity = data.total_quantity;
-
-        // Cập nhật số lượng giỏ hàng trên giao diện
-        let cartCounters = document.getElementsByClassName('cart-counter');
+function updateCartCounter(data) {
+     let totalQuantity = data.total_quantity
+    let cartCounters = document.getElementsByClassName('cart-counter');
         for (let counter of cartCounters) {
             counter.innerText = totalQuantity;
         }
-    })
-    .catch(function (error) {
-        console.error("Error updating cart counter:", error);
-    });
+
 }
 
 // Hàm thêm sách vào giỏ hàng
@@ -99,7 +79,7 @@ function addToCart(bookId, bookName, price) {
         success: function (response) {
             if (response.success) {
                 console.log(response.message);// Log thành công
-                updateCartCounter();
+                updateCartCounter(response.cart);
             } else {
                 alert(response.error);  // Hiển thị thông báo lỗi
             }
@@ -127,6 +107,7 @@ function addToCart(bookId, bookName, price) {
             success: function (response) {
                 if (response.success) {
                     console.log(response.message);  // Log thành công
+                    updateCartCounter(response.cart);
                 } else {
                     alert(response.error);  // Hiển thị thông báo lỗi
                 }

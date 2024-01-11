@@ -1,6 +1,6 @@
 import math
 from flask import flash
-from flask import render_template, request, jsonify, session
+from flask import render_template, request, jsonify, session, redirect
 
 import dao
 import utils
@@ -61,12 +61,12 @@ def add_to_cart():
 
     quantity_in_stock = dao.get_quantity_in_stock(book_id)
     if quantity_in_stock is not None and quantity > quantity_in_stock:
-        return jsonify({"success": False, "error": "Sản phẩm đã hết hàng."}), 400
+        return jsonify({"success": False, "error": "Sản phẩm đã hết hàng."})
 
     if quantity_in_stock is not None and book_id in cart:
         total_quantity_in_cart = cart[book_id]['quantity'] + quantity
         if total_quantity_in_cart > quantity_in_stock:
-            return jsonify({"success": False, "error": "Sản phẩm không đủ hàng trong kho."}), 400
+            return jsonify({"success": False, "error": "Sản phẩm không đủ hàng trong kho."})
     if book_id in cart:
             cart[book_id]['quantity'] += 1
     else:
@@ -122,11 +122,12 @@ def save_customer_info_route():
                                        address=request.form.get('Address'))
             except Exception as ex:
                 err_msg = str(ex)
-
+            else:
+                return redirect('/cart')
         else:
             err_msg = "Nhập thông tin đầy đủ "
 
-    return render_template('index.html', err_msg=err_msg)
+    return render_template('info.html', err_msg=err_msg)
 
 
 @app.context_processor

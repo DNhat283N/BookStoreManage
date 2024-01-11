@@ -1,6 +1,6 @@
 from app.models import Category, Book, UserRoleEnum, Author, Publisher, Customer, DeliveryOfCustomer, DeliveryAddress, PhoneNumber, PersonModel
 from app import app, db
-import hashlib
+from datetime import datetime
 from sqlalchemy import func, or_
 
 import cloudinary.uploader
@@ -52,7 +52,7 @@ def get_quantity_in_stock(book_id):
 
 def save_customer_info(customer_id, full_name, phone_number, birth_day, address, gender):
     # Kiểm tra xem khách hàng đã tồn tại hay chưa
-    existing_customer = Customer.query.filter_by(Customer_ID=customer_id).first()
+    existing_customer = Customer.query.filter(Customer.Customer_ID.__eq__(customer_id))
 
     if existing_customer:
         # Nếu khách hàng đã tồn tại, kiểm tra xem thông tin có thay đổi không
@@ -89,10 +89,13 @@ def save_customer_info(customer_id, full_name, phone_number, birth_day, address,
 
     else:
         # Nếu khách hàng chưa tồn tại, tạo mới đối tượng Customer và lưu vào CSDL
-        new_customer = Customer(Customer_ID=customer_id, FullName=full_name)
-        if gender:
-            new_customer.Gender = gender
+        birth_day = datetime.strptime(birth_day, "%Y-%m-%d")
+        gender = gender.lower()
+        new_customer = Customer(Customer_ID=customer_id, FullName=full_name, Gender=gender)
+        new_customer.Gender = gender
+        new_customer.BirthDay = birth_day
         db.session.add(new_customer)
+
 
         # Tạo mới Số CCCD và lưu vào CSDL
         new_phone_number = PhoneNumber(Phone_Number=phone_number, Customer_ID=customer_id)
