@@ -1,6 +1,12 @@
+<<<<<<< HEAD
+from app.models import Category, Book, Account, Author, Publisher
+from app import app
+import hashlib
+=======
 from app.models import Category, Book, UserRoleEnum, Author, Publisher, Customer, DeliveryOfCustomer, DeliveryAddress, PhoneNumber, PersonModel
 from app import app, db
 from datetime import datetime
+>>>>>>> 23d9dd2ff889d7aee083cc6b86ae1c3b24b68f49
 from sqlalchemy import func, or_
 
 import cloudinary.uploader
@@ -14,10 +20,11 @@ def count_book():
     return Book.query.count()
 
 
-# def check_login(username, password):
-#     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
-#     return User.query.filter(User.username.__eq__(username.strip()),
-#                              User.password.__eq__(password)).first()
+def authenticated_login(username, password):
+    password = str(hashlib.md5(password.encode('utf-8')).hexdigest())
+
+    return Account.query.filter(Account.Username.__eq__(username),
+                                Account.Password.__eq__(password)).first()
 
 
 def get_book(kw, cate_id, page=None):
@@ -27,10 +34,14 @@ def get_book(kw, cate_id, page=None):
     book = book.join(Publisher)
 
     if kw:
-
         book = book.filter(or_(func.lower(Book.BookName).contains(func.lower(kw)),
+<<<<<<< HEAD
+                               func.lower(Author.AuthorName).contains(func.lower(kw)),
+                               func.lower(Publisher.Publish_Name).contains(func.lower(kw))))
+=======
                                func.lower(Author.FullName).contains(func.lower(kw)),
                                func.lower(Publisher.Publisher_Name).contains(func.lower(kw))))
+>>>>>>> 23d9dd2ff889d7aee083cc6b86ae1c3b24b68f49
 
     if cate_id:
         book = book.filter(Book.Category_ID.__eq__(cate_id))
@@ -38,13 +49,17 @@ def get_book(kw, cate_id, page=None):
     if page:
         page = int(page)
         page_size = app.config["PAGE_SIZE"]
-        start = (page - 1)*page_size
+        start = (page - 1) * page_size
 
         return book.slice(start, start + page_size)
 
     return book.all()
 
 
+<<<<<<< HEAD
+def get_user_by_id(account_id):
+    return Account.query.get(account_id)
+=======
 def get_quantity_in_stock(book_id):
     book = Book.query.filter_by(Book_ID=book_id).first()
     return book.QuantityInStock if book else None
@@ -115,3 +130,4 @@ def save_customer_info(customer_id, full_name, phone_number, birth_day, address,
 
 
 
+>>>>>>> 23d9dd2ff889d7aee083cc6b86ae1c3b24b68f49
