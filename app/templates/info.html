@@ -1,0 +1,41 @@
+{% extends 'layout/base.html' %}
+
+{% block title %} Trang chủ {% endblock %}
+
+{% block content %}
+<h1 class="text-center text-info mt-1">Nhập thông tin người dùng</h1>
+
+{% if err_msg %}
+<div class="alert alert-danger">
+{{ err_msg }}
+</div>
+{% endif %}
+
+
+<div class="container">
+    <form method="post" action="/register" enctype="multipart/form-data">
+        <div class="mb-3 mt-3">
+            <label for="Customer_ID" class="form-label">Số CCCD:</label>
+            <input type="number" class="form-control" id="Customer_ID" placeholder="Số CCCD" name="Customer_ID" required="">
+        </div>
+        <div class="mb-3 mt-3">
+            <label for="FullName" class="form-label">Tên đăng nhập:</label>
+            <input type="text" class="form-control" id="FullName" placeholder="Tên đăng nhập" name="FullName" required="">
+        </div>
+        <div class="mb-3">
+            <label for="Gender" class="form-label">Giới Tính:</label>
+            <input type="text" class="form-control" id="Gender" placeholder="Giới Tính" name="Gender" required="">
+        </div>
+        <div class="mb-3">
+            <label for="BirthDay" class="form-label">Ngày/Tháng/Năm sinh:</label>
+            <input type="date" class="form-control" id="BirthDay" placeholder="Ngày/Tháng/Năm sinh" name="BirthDay" required="">
+        </div>
+        <div class="mb-3">
+            <label for="Address" class="form-label">Địa Chỉ</label>
+            <input type="text" class="form-control" id="Address" name="Address" required="">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Xác Nhận</button>
+    </form>
+</div>
+{% endblock%}
