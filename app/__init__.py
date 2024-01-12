@@ -4,10 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
 
-# app = Flask(__name__)
-app = Flask(__name__, template_folder='templates')
 app = Flask(__name__, template_folder='template')
-# app = Flask(__name__, template_folder='template/layout')
 app.secret_key = "1234567890!@#$%^&*()qwertyuioplkjhgfdsazxcvbnm,./ASDFGHJKLZMXNCBVQWERTYUIOP"
 app.config["SQLALCHEMY_DATABASE_URI"] = ("mysql+pymysql://root:%s@localhost/dbproject?charset=utf8mb4"
                                          % quote("Admin@123"))

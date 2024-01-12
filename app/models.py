@@ -67,38 +67,6 @@ class Publisher(db.Model):
         return self.Publisher_Name
 
 
-class Customer(PersonModel):
-    __tablename__ = 'Customer'
-
-    Customer_ID = Column(CHAR(10), primary_key=True, nullable=True)
-    phone_number = relationship('PhoneNumber', backref='customer', lazy=True)
-    bill = relationship('Bill', backref='customer', lazy=True)
-    delivery_of_customer = relationship('DeliveryOfCustomer', backref='customer', lazy=True)
-
-
-class Staff(PersonModel):
-    Staff_ID = Column(Integer, primary_key=True, nullable=True)
-    Starting_Date = Column(DateTime, default=datetime.now())
-    Position = Column(Enum(UserRoleEnum), default=UserRoleEnum.STAFF)
-
-    account = relationship('Account', backref='staff', lazy=True)
-
-
-class Author(PersonModel):
-    __tablename__ = 'Author'
-    Author_ID = Column(Integer, primary_key=True, nullable=True)
-    books = relationship('Book', backref='author', lazy=True)
-
-
-class Publisher(db.Model):
-    __tablename__ = 'Publish'
-    Publisher_ID = Column(Integer, primary_key=True, autoincrement=True)
-    Publisher_Name = Column(String(255), nullable=False, unique=True)
-    Publisher_Address = Column(String(255), nullable=False, unique=True)
-
-    books = relationship('Book', backref='publisher', lazy=True)
-
-
 class Book(db.Model):
     __tablename__ = 'Book'
     Book_ID = Column(Integer, primary_key=True, autoincrement=True)
@@ -122,14 +90,6 @@ class Book(db.Model):
 class Account(db.Model, UserMixin):
     __tablename__ = 'Account'
 
-    Publish_ID = Column(Integer, ForeignKey(Publisher.Publisher_ID), nullable=False)
-
-    bill_detail = relationship('BillDetail', backref='book', lazy=True)
-
-
-class Account(db.Model, UserMixin):
-    __tablename__ = 'User'
-
     Account_ID = Column(Integer, primary_key=True, autoincrement=True)
     Name = Column(String(50), nullable=False, unique=True)
     Username = Column(String(50), nullable=False, unique=True)
@@ -137,7 +97,6 @@ class Account(db.Model, UserMixin):
     User_Role = Column(Enum(UserRoleEnum), default=UserRoleEnum.STAFF)
 
     Staff_ID = Column(Integer, ForeignKey(Staff.Staff_ID), nullable=False)
-
 
     def __str__(self):
         return self.Name
@@ -292,76 +251,6 @@ if __name__ == "__main__":
                          Config_Quantity="150", Config_Unit="Quyển")
         cf2 = BookConfig(Config_ID=2, Config_Name="Minimum Input Quantity",
                          Config_Quantity="50", Config_Unit="Quyển")
-        cf3 = BookConfig(Config_ID=3, Config_Name="Cancel_Order_Time", Config_Quantity="48", Config_Unit="Giờ")
-        db.session.add_all(['cf1', 'cf2', 'cf3'])
-        db.session.commit()
-
-        c1 = Category(Category_Name="Tiểu thuyết")
-        c2 = Category(Category_Name="Trinh thám ")
-        c3 = Category(Category_Name="Kinh doanh và tài chính")
-        c4 = Category(Category_Name="Tâm lý học")
-        c5 = Category(Category_Name="Khoa học và Thiên văn học ")
-        c6 = Category(Category_Name="Lịch sử và Văn hóa")
-        c7 = Category(Category_Name="Nấu ăn và ẩm thực ")
-        c8 = Category(Category_Name="Trẻ em và thiếu nhi")
-        db.session.add_all([c1, c2, c3, c4, c5, c6, c7, c8])
-        db.session.commit()
-
-        p1 = Publisher(Publisher_Name="Nhà xuất bản Trẻ", Publisher_Address="161B Lý Chính Thắng; Phường 7; Quận 3; Thành phố Hồ Chí Minh.")
-        p2 = Publisher(Publisher_Name="Nhà xuất bản Kim Đồng", Publisher_Address="248 Đ. Cống Quỳnh, Phường Phạm Ngũ Lão, Quận 1, Thành phố Hồ Chí Minh")
-        p3 = Publisher(Publisher_Name="Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh", Publisher_Address="62 Nguyễn Thị Minh Khai, phường Đa Kao, quận 1, TPHCM")
-        p4 = Publisher(Publisher_Name="Nhà xuất bản Lao Động", Publisher_Address="82 Trần Hưng Đạo, Hà Nộ")
-        p5 = Publisher(Publisher_Name="Nhà xuất bản Hội Nhà văn", Publisher_Address="65, Nguyễn Du, quận Hai Bà Trưng, Hà Nội")
-        db.session.add_all([p1, p2, p3, p4, p5])
-        db.session.commit()
-
-        a1 = Author(FullName='Nguyễn Ái Quốc', Gender='Nam', BirthDay='1980-05-19')
-        a2 = Author(FullName='Hồ Xuân Hương', Gender='Nữ', BirthDay='1772/07/10')
-        a3 = Author(FullName='Nguyễn Du', Gender='Nam', BirthDay='1776/01/03')
-        a4 = Author(FullName='Nguyễn Nhật Ánh', Gender='Nam', BirthDay='1955/05/07')
-        a5 = Author(FullName='Nguyễn Ngọc Thạch', Gender='Nam', BirthDay='1987/01/02')
-        db.session.add_all([a1, a2, a3, a4, a5])
-        db.session.commit()
-
-        s1 = Book(BookName="Mười người da đen nhỏ", Price=135000, Category_ID=1, Author_ID='1', Publish_ID=1,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s2 = Book(BookName="Phía Sau Nghi Can X ", Price=150000, Category_ID=2, Author_ID='2', Publish_ID=2,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s3 = Book(BookName="Bí quyết gây dựng cơ nghiệp bạc tỷ", Price=135000, Category_ID=3, Author_ID='3', Publish_ID=3,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s4 = Book(BookName="Tâm lý học đám đông", Price=135000, Category_ID=4, Author_ID='4', Publish_ID=4,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s5 = Book(BookName="Từ điển thiên văn học và vật lý thiên văn", Price=135000, Category_ID=5, Author_ID='5', Publish_ID=5,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s6 = Book(BookName="Lịch sử và văn hóa Đông Nam Á", Price=135000, Category_ID=6, Author_ID='1', Publish_ID=1,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s7 = Book(BookName="Ăn uống thời hiện đại", Price=135000, Category_ID=7, Author_ID='2', Publish_ID=2,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s8 = Book(BookName="Kể truyện cho bé tuổi mầm non", Price=135000, Category_ID=8, Author_ID='3', Publish_ID=3,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s9 = Book(BookName="Tiểu thuyết hay 2021", Price=135000, Category_ID=1, Author_ID='4', Publish_ID=4,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        s10 = Book(BookName="Mật mã Da Vinci", Price=135000, Category_ID=2, Author_ID='5', Publish_ID=5,
-                  Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-                  QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
-        db.session.add_all([s1, s2, s3, s4, s5, s6, s7, s8, s9, s10])
-        db.session.commit()
-
-        t1 = Staff(FullName="Nguyễn Đình Nhật", BirthDay='2003-08-29', Gender="Nam", Position=UserRoleEnum.ADMIN, Starting_Date='2023-12-01')
-        db.session.add(t1)
-        db.session.commit()
-
-        u1 = Account(Name=' Admin ', Username="admin",
-                  Password=str(hashlib.md5('12345'.encode('utf-8')).hexdigest()),
-                  User_Role = UserRoleEnum.STAFF, Staff_ID = 1)
-        db.session.add_all([u1])
+        cf3 = BookConfig(Config_ID=3, Config_Name="Cancel Order Time", Config_Quantity="48", Config_Unit="Giờ")
+        db.session.add_all([cf1, cf2, cf3])
         db.session.commit()
