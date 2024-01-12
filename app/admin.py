@@ -1,9 +1,10 @@
-from app.models import Category, Book, UserRoleEnum
-from app import app, db, dao
-from flask_admin import Admin, BaseView, expose, AdminIndexView
+from flask import redirect
+from flask_admin import Admin, BaseView, expose, menu
 from flask_admin.contrib.sqla import ModelView
 from flask_login import logout_user, current_user
-from flask import redirect, request, Flask, session
+
+from app import app, db
+from app.models import Category, Book, UserRoleEnum, BookConfig
 
 
 class AuthenticatedAdminView(ModelView):
@@ -22,14 +23,20 @@ class CategoryView(AuthenticatedAdminView):
 
 
 class BookView(AuthenticatedAdminView):
-    column_list = ['Book_ID', 'BookName', 'Price', 'QuantityInStock', 'Category_Name']
+    column_list = ['Book_ID', 'BookName', 'Price', 'QuantityInStock', 'Category_ID']
     column_filters = ['BookName', 'Category_ID', 'Publisher_ID', 'Author_ID']
 
 
-class StatsView(AuthenticatedUserView):
+class TableStatsView(AuthenticatedUserView):
     @expose('/')
     def index(self):
-        return self.render('admin/stats.html')
+        return self.render('admin/stats_with_table.html')
+
+
+class ChartStatsView(AuthenticatedUserView):
+    @expose('/')
+    def index(self):
+        return self.render('admin/stats_with_chart.html')
 
 
 class LogOutView(AuthenticatedUserView):
@@ -39,8 +46,21 @@ class LogOutView(AuthenticatedUserView):
         return redirect('/admin')
 
 
+class ConfigView(AuthenticatedAdminView):
+    column_list = ['Config_ID', 'Config_Name', 'Config_Quantity', 'Config_Unit']
+
+
+stats_category = menu.MenuCategory('Statistic', class_name='dropdown')
+
+
 admin = Admin(app=app, name='Quản Trị Bán Hàng Nhà Sách', template_mode='bootstrap4')
 admin.add_view(CategoryView(Category, db.session))
 admin.add_view(BookView(Book, db.session))
-admin.add_view(StatsView(name="Statistic"))
+admin.add_view(ConfigView(BookConfig, db.session))
+
+admin.add_menu_item(stats_category)
+admin.add_view(TableStatsView(name="Table Format", category='Statistic'))
+admin.add_view(ChartStatsView(name="Chart Format", category='Statistic'))
+
 admin.add_view(LogOutView(name="Log Out"))
+
