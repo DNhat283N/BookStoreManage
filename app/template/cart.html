@@ -14,7 +14,7 @@
         <th></th>
     </tr>
     {% for c in session['cart'].values() %}
-     <script>
+    <script>
         console.log("Dữ liệu nhận được trong trang giỏ hàng:", {{ c|tojson|safe }});
     </script>
     <tr id="product{{ c.Book_ID }}">
@@ -22,7 +22,8 @@
         <td class="dark-mode-text">{{ c.BookName }}</td>
         <td class="dark-mode-text">{{ c.Price }} VMĐ</td>
         <td>
-            <input type="number" onblur="uppDateCart({{ c.Book_ID }}, this)" value="{{ c.quantity }}" class="form-control" />
+            <input type="number" onblur="uppDateCart({{ c.Book_ID }}, this)" value="{{ c.quantity }}"
+                   class="form-control"/>
         </td>
         <td>
             <button class="btn btn-danger" onclick="deleteCart({{c.Book_ID}}, this)">&times;</button>
@@ -36,7 +37,15 @@
 
 </div>
 <div>
-    <a href="/info" class="btn btn-success">Thanh toán</a>
-</div>
+    {% if 'save_status' in session and session['save_status'] == 'success' %}
+        <button onclick="pay()" class="btn btn-primary">Thanh toán</button>
+        <p>Phương thức nhận sách: {% if session['delivery_method'] == 'pickupAtStore' %}Nhận tại nhà sách{% else %}Nhận tại nhà{% endif %}</p>
+    {% else %}
+        <a href="/info" class="btn btn-success">Nhập thông tin</a>
     {% endif %}
+</div>
+<script>
+    console.log("Giá trị delivery_method:", "{{ delivery_method }}");
+</script>
+{% endif %}
 {% endblock %}

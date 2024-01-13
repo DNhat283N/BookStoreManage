@@ -4,23 +4,35 @@
 
 {% block content %}
 <h1 class="text-center text-info mt-1">Nhập thông tin người dùng</h1>
-
-{% if err_msg %}
-<div class="alert alert-danger">
-{{ err_msg }}
-</div>
-{% endif %}
-
-
 <div class="container">
-    <form method="post" action="/register" enctype="multipart/form-data">
+    <form method="post" action="/info" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">Chọn phương thức nhận sách:</label>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="pickupAtStore" name="deliveryMethod"
+                       value="pickupAtStore" checked>
+                <label class="form-check-label" for="pickupAtStore" >Nhận tại nhà sách</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="deliverToHome" name="deliveryMethod"
+                       value="deliverToHome">
+                <label class="form-check-label" for="deliverToHome">Nhận tại nhà</label>
+            </div>
+        </div>
         <div class="mb-3 mt-3">
             <label for="Customer_ID" class="form-label">Số CCCD:</label>
-            <input type="number" class="form-control" id="Customer_ID" placeholder="Số CCCD" name="Customer_ID" required="">
+            <input type="number" pattern=".{12}" class="form-control" id="Customer_ID" placeholder="Số CCCD"
+                   name="Customer_ID" required="">
         </div>
         <div class="mb-3 mt-3">
             <label for="FullName" class="form-label">Tên đăng nhập:</label>
-            <input type="text" class="form-control" id="FullName" placeholder="Tên đăng nhập" name="FullName" required="">
+            <input type="text" class="form-control" id="FullName" placeholder="Tên đăng nhập" name="FullName"
+                   required="">
+        </div>
+        <div class="mb-3 mt-3">
+            <label for="Phone_Number" class="form-label">Số ĐT:</label>
+            <input type="number" class="form-control" id="Phone_Number" placeholder="Số ĐT" name="Phone_Number"
+                   required="">
         </div>
         <div class="mb-3">
             <label for="Gender" class="form-label">Giới Tính:</label>
@@ -28,7 +40,8 @@
         </div>
         <div class="mb-3">
             <label for="BirthDay" class="form-label">Ngày/Tháng/Năm sinh:</label>
-            <input type="date" class="form-control" id="BirthDay" placeholder="Ngày/Tháng/Năm sinh" name="BirthDay" required="">
+            <input type="date" class="form-control" id="BirthDay" placeholder="Ngày/Tháng/Năm sinh" name="BirthDay"
+                   required="">
         </div>
         <div class="mb-3">
             <label for="Address" class="form-label">Địa Chỉ</label>
@@ -38,4 +51,13 @@
         <button type="submit" class="btn btn-primary">Xác Nhận</button>
     </form>
 </div>
+<style>
+    .form-check-input {
+        margin-right: 5px;
+    }
+
+    .form-check-label {
+        margin-left: 5px;
+    }
+</style>
 {% endblock%}

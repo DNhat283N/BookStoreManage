@@ -1,10 +1,11 @@
 import math
 from flask import flash
-from flask import render_template, request, jsonify, session, redirect
-
+from flask import render_template, request, jsonify, session, redirect, url_for
+from app.models import Category, Book, UserRoleEnum, Author, Publisher, Customer, DeliveryOfCustomer, DeliveryAddress, PhoneNumber, PersonModel
 import dao
+from datetime import datetime
 import utils
-from app import app
+from app import app, db
 
 
 @app.route('/')
@@ -21,8 +22,17 @@ def index():
 
 
 @app.route('/cart')
-def cart():
-    return render_template('cart.html')
+def cart_route():
+    save_status = request.args.get('save_status')
+
+    # Kiểm tra nếu trạng thái lưu là 'success'
+    if save_status == 'success':
+        # Nếu 'save_status' là 'success', đặt biến session để chỉ định điều đó
+        session['save_status'] = 'success'
+
+    return render_template('cart.html', save_status=save_status,
+                           delivery_method=session.get('delivery_method'),
+                           customer_id=session.get('customer_id'))
 
 
 @app.route('/api/check_quantity', methods=['post'])
@@ -102,32 +112,96 @@ def delete_product(ID_Book):
     return jsonify(utils.count_cart(cart))
 
 
-@app.route('/info', methods=['get', 'post'])
+@app.route('/info', methods=['GET', 'POST'])
 def save_customer_info_route():
-    err_msg = None
-    if request.method.__eq__('POST'):
-        customer_id = request.form.get('Customer_ID')
-        full_name = request.form.get('FullName')
-        gender = request.form.get('Gender')
-        phone_number = request.form.get('Phone_Number')
-        birth_day = request.form.get('BirthDay')
-        address = request.form.get('Address')
-        if all([customer_id, full_name, gender, phone_number, birth_day, address]):
-            try:
-                dao.save_customer_info(customer_id=request.form.get('Customer_ID'),
-                                       full_name=request.form.get('FullName'),
-                                       gender=request.form.get('Gender'),
-                                       phone_number=request.form.get('Phone_Number'),
-                                       birth_day=request.form.get('BirthDay'),
-                                       address=request.form.get('Address'))
-            except Exception as ex:
-                err_msg = str(ex)
-            else:
-                return redirect('/cart')
-        else:
-            err_msg = "Nhập thông tin đầy đủ "
+    if request.method == 'POST':
+        try:
+            customer_id = request.form.get('Customer_ID')
+            full_name = request.form.get('FullName')
+            gender = request.form.get('Gender')
+            phone_number_str = request.form.get('Phone_Number')
+            birth_day_str = request.form.get('BirthDay')
+            address = request.form.get('Address')
 
-    return render_template('info.html', err_msg=err_msg)
+            app.logger.info(
+                f"Received data: {customer_id}, {full_name}, {gender}, {phone_number_str}, {birth_day_str}, {address}")
+
+            delivery_method = request.form.get('deliveryMethod')
+
+            session['delivery_method'] = delivery_method
+            session['customer_id'] = customer_id
+
+            print("Giá trị của delivery_method và customer_id:", session.get('delivery_method'),
+                  session.get('customer_id'))
+
+            if all([customer_id, full_name, gender, phone_number_str, birth_day_str, address]):
+                # Chuyển đổi kiểu dữ liệu cho phù hợp với thuộc tính
+                phone_number = PhoneNumber(Phone_Number=phone_number_str)
+                birth_day = datetime.strptime(birth_day_str, '%Y-%m-%d').date()
+
+                # Chuyển đổi full_name, gender, và address thành định dạng chữ cái đầu viết hoa và các chữ sau viết thường
+                full_name = full_name.title()
+                gender = gender.title()
+                address = address.title()
+
+                # Tạo đối tượng customer
+                customer = Customer(
+                    Customer_ID=customer_id,
+                    FullName=full_name,
+                    Gender=gender,
+                    phone_number=[phone_number],  # Sử dụng 1 đối tượng phone number duy nhất
+                    BirthDay=birth_day,
+                )
+
+                db.session.add(customer)
+
+                # Tạo ra đối tượng DeliveryAddress
+                delivery_address = DeliveryAddress(Address=address)
+                db.session.add(delivery_address)
+
+                # Tạo ra đối tượng DeliveryOfCustomer và liên kết với Customer và DeliveryAddress
+                delivery_of_customer = DeliveryOfCustomer(
+                    customer=customer,
+                    address=delivery_address
+                )
+
+                db.session.add(delivery_of_customer)
+
+                # Lưu thay đổi vào CSDL
+                db.session.commit()
+
+                app.logger.info("Dữ liệu được lưu thành công")
+                flash('success', 'save_status')
+                # Redirect to '/cart' with save_status parameter
+                return redirect(url_for('cart_route', save_status='success'))
+            else:
+                app.logger.warning("Dữ liệu không hợp lệ")
+                flash('error', 'save_status')
+                return "Lưu không thành công"
+        except Exception as e:
+            app.logger.error(f"Lỗi khi lưu dữ liệu: {e}")
+            flash('error', 'save_status')
+            return "Lưu không thành công"
+
+    else:
+        # Xóa 'save_status' khi truy cập trang '/info'
+        session.pop('save_status', None)
+
+    return render_template('info.html')
+
+
+@app.route('/api/pay', methods=['post'])
+def pay():
+    cart = session.get('cart')
+    delivery_method = session.get('delivery_method')
+    customer_id = session.get('customer_id')
+    if dao.add_bill(cart, delivery_method, customer_id):
+        session.pop('cart', None)
+        session.pop('delivery_method', None)
+        session.pop('customer_id', None)
+        return jsonify({'status': 200})
+
+    return jsonify({'status': 500, 'err_msg': 'Somsthing wrong!'})
 
 
 @app.context_processor

@@ -92,33 +92,7 @@ function addToCart(bookId, bookName, price) {
 }
 
 
- function addToCart1(bookId, bookName, price) {
-        var quantity = 1;
-        $.ajax({
-            url: '/api/cart',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                "Book_ID": bookId,
-                "BookName": bookName,
-                "Price": price,
-                "quantity": quantity
-            }),
-            success: function (response) {
-                if (response.success) {
-                    console.log(response.message);  // Log thành công
-                    updateCartCounter(response.cart);
-                } else {
-                    alert(response.error);  // Hiển thị thông báo lỗi
-                }
-            },
-            error: function (xhr, status, error) {
-                // Xử lý lỗi AJAX
-                alert("Không đủ hàng cung cấp.");
-            }
-        });
-        window.location.href = '/cart';
-    }
+
 
 function uppDateCart(Book_ID, obj) {
     obj.disable = true;
@@ -172,4 +146,17 @@ function deleteCart(Book_ID, obj){
             })
     }
 }
+function pay(){
+    if (confirm("Bạn chắc chắc thanh toán?") ===true){
+        fetch("/api/pay",{
+            method:'post'
+        }).then(res =>res.json()).then(data =>{
+            console.log(data);
+            if (data.status === 200)
+                location.reload();
+            else
+                alert(data.err_msg)
+        })
+    }
 
+}

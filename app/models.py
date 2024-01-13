@@ -32,7 +32,7 @@ class PersonModel(db.Model):
 class Customer(PersonModel):
     __tablename__ = 'Customer'
 
-    Customer_ID = Column(CHAR(10), primary_key=True, nullable=True)
+    Customer_ID = Column(CHAR(12), primary_key=True, nullable=True)
     phone_number = relationship('PhoneNumber', backref='customer', lazy=True)
     bill = relationship('Bill', backref='customer', lazy=True)
     delivery_of_customer = relationship('DeliveryOfCustomer', backref='customer', lazy=True)
@@ -93,7 +93,7 @@ class PhoneNumber(db.Model):
     Phone_Number_ID = Column(Integer, primary_key=True, autoincrement=True)
     Phone_Number = Column(CHAR(10), nullable=True, unique=True)
 
-    Customer_ID = Column(CHAR(10), ForeignKey(Customer.Customer_ID), nullable=False)
+    Customer_ID = Column(CHAR(12), ForeignKey(Customer.Customer_ID), nullable=False)
 
 
 class DeliveryAddress(db.Model):
@@ -108,17 +108,15 @@ class DeliveryOfCustomer(db.Model):
     DOC_ID = Column(Integer, primary_key=True, autoincrement=True)
 
     Address_ID = Column(Integer, ForeignKey(DeliveryAddress.Address_ID), nullable=False)
-    Customer_ID = Column(CHAR(10), ForeignKey(Customer.Customer_ID), nullable=False)
+    Customer_ID = Column(CHAR(12), ForeignKey(Customer.Customer_ID), nullable=False)
 
 
 class Bill(db.Model):
     __tablename__ = 'Bill'
     Bill_ID = Column(Integer, primary_key=True, autoincrement=True)
-    Total_Amount = Column(Integer, nullable=True)
-    Book_Receive_At = Column(Boolean, nullable=False)
-    State = Column(Integer, nullable=False)
-    Customer_ID = Column(CHAR(10), ForeignKey(Customer.Customer_ID), nullable=False)
-
+    Book_Receive_At = Column(String(50), nullable=False)
+    Customer_ID = Column(CHAR(12), ForeignKey(Customer.Customer_ID), nullable=False)
+    IsCancel = Column(Boolean, nullable=False)
     bill_detail = relationship('BillDetail', backref='bill', lazy=True)
 
 
@@ -126,6 +124,7 @@ class BillDetail(db.Model):
     __tablename_ = 'BillDetail'
     Bill_Detail_ID = Column(Integer, primary_key=True, autoincrement=True)
     Quantity = Column(Integer, nullable=False, default=0)
+    Total_Amount = Column(Integer, nullable=True)
     Order_Date = Column(DateTime, default=datetime.now())
 
     Bill_ID = Column(Integer, ForeignKey(Bill.Bill_ID), nullable=False)
@@ -167,25 +166,25 @@ if __name__ == "__main__":
         #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
         # s2 = Book(BookName="Phía Sau Nghi Can X ", Price=150000, Category_ID=2, Author_ID='2', Publish_ID=2,
         #           Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-        #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
+        #           QuantityInStock=10, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
         # s3 = Book(BookName="Bí quyết gây dựng cơ nghiệp bạc tỷ", Price=135000, Category_ID=3, Author_ID='3', Publish_ID=3,
         #           Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-        #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
+        #           QuantityInStock=15, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
         # s4 = Book(BookName="Tâm lý học đám đông", Price=135000, Category_ID=4, Author_ID='4', Publish_ID=4,
         #           Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-        #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
+        #           QuantityInStock=20, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
         # s5 = Book(BookName="Từ điển thiên văn học và vật lý thiên văn", Price=135000, Category_ID=5, Author_ID='5', Publish_ID=5,
         #           Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
         #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
         # s6 = Book(BookName="Lịch sử và văn hóa Đông Nam Á", Price=135000, Category_ID=6, Author_ID='1', Publish_ID=1,
         #           Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-        #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
+        #           QuantityInStock=10, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
         # s7 = Book(BookName="Ăn uống thời hiện đại", Price=135000, Category_ID=7, Author_ID='2', Publish_ID=2,
         #           Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-        #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
+        #           QuantityInStock=15, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
         # s8 = Book(BookName="Kể truyện cho bé tuổi mầm non", Price=135000, Category_ID=8, Author_ID='3', Publish_ID=3,
         #           Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
-        #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
+        #           QuantityInStock=20, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
         # s9 = Book(BookName="Tiểu thuyết hay 2021", Price=135000, Category_ID=1, Author_ID='4', Publish_ID=4,
         #           Image="https://i.pinimg.com/originals/91/76/9a/91769a5f3c3d663cc3c2152e9fadabf0.jpg",
         #           QuantityInStock=5, BookInfo="Tiểu thuyết nói về vụ án bí ẩn trên hòn đảo Soldier Island với 10 người bằng cách này hay cách khác đã thiệt mạng mà không hề có sự hiện diện hay dấu vết của thủ phạm")
