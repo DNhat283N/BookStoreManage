@@ -116,7 +116,7 @@ class Bill(db.Model):
     Bill_ID = Column(Integer, primary_key=True, autoincrement=True)
     Book_Receive_At = Column(String(50), nullable=False)
     Customer_ID = Column(CHAR(12), ForeignKey(Customer.Customer_ID), nullable=False)
-    IsCancel = Column(Boolean, nullable=False)
+    IsCancel = Column(Boolean, nullable=True)
     bill_detail = relationship('BillDetail', backref='bill', lazy=True)
 
 

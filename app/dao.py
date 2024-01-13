@@ -48,7 +48,7 @@ def add_bill(cart, delivery_method, customer_id):
 
         if customer_id and delivery_method:
             # Kiểm tra giá trị của Book_Receive_At để thiết lập giá trị state
-            state = False if delivery_method == 'pickupAtStore' else True
+            state = False if delivery_method == 'pickupAtStore' else None
             bill = Bill(Customer_ID=customer_id, Book_Receive_At=delivery_method, IsCancel=state)
             db.session.add(bill)
 
