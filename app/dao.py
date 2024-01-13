@@ -3,6 +3,9 @@ from app import app, db
 from sqlalchemy import func, or_, desc
 from flask import session
 
+import hashlib
+from datetime import datetime
+
 
 def get_category():
     return Category.query.all()
@@ -12,19 +15,28 @@ def count_book():
     return Book.query.count()
 
 
+def authenticated_login(username, password):
+    password = str(hashlib.md5(password.encode('utf-8')).hexdigest())
+
+    return Account.query.filter(Account.Username.__eq__(username),
+                                Account.Password.__eq__(password)).first()
+
+
 def get_book(kw, cate_id, page=None):
     book = Book.query
     if kw:
         book = book.join(Author)
-    book = book.join(Publisher)
+        book = book.join(Publisher)
 
     if kw:
         book = book.filter(or_(func.lower(Book.BookName).contains(func.lower(kw)),
+                               func.lower(Author.AuthorName).contains(func.lower(kw)),
+                               func.lower(Publisher.Publisher_Name).contains(func.lower(kw))),
                                func.lower(Author.FullName).contains(func.lower(kw)),
-                               func.lower(Publisher.Publisher_Name).contains(func.lower(kw))))
+                               func.lower(Publisher.Publisher_Name).contains(func.lower(kw)))
 
     if cate_id:
-        book = book.filter(Book.Category_ID.__eq__(cate_id))
+        book = Book.filter(Book.Category_ID.__eq__(cate_id))
 
     if page:
         page = int(page)
@@ -35,6 +47,9 @@ def get_book(kw, cate_id, page=None):
 
     return book.all()
 
+
+def get_user_by_id(account_id):
+    return Account.query.get(account_id)
 
 def get_quantity_in_stock(book_id):
     book = Book.query.filter_by(Book_ID=book_id).first()
