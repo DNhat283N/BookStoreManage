@@ -4,7 +4,13 @@
 <h1 class="text-center text-info">Thống Kê Báo Cáo Bằng Bảng</h1>
 <div class="search-bar-container d-grid gap-2 col-6 mx-auto">
         <form class="search-bar" method="get" action="/admin/tablestatsview/">
-            <input class="form-control me-2" type="text" name="kwd" placeholder="Nhập từ khóa...">
+            <div>
+                <button class="btn btn-danger btn-sm" style="display:none;" id="reset-btn" type="submit">&times;Reset</button>
+            </div>
+            {% if kw == "None" %}
+                {% set kw = "" %}
+            {% endif %}
+             <input class="form-control me-2" value="{{kw}}" id="search-box" type="text" name="kwd" placeholder="Nhập từ khóa...">
             <div>
                 <button class="btn btn-primary " style="background-color:blue " type="submit">Search</button>
             </div>
@@ -12,12 +18,12 @@
 </div>
 <div class="row container col-md-12 justify-content-center">
     <div class="col-md-6">
-        <h1>Báo cáo theo số lương</h1>
+        <h1>Báo cáo theo doanh thu</h1>
         <table class="table">
             <tr>
-                <th>Mã Danh Mục</th>
-                <th>Tên Danh Mục</th>
-                <th>Số lượng</th>
+                <th>Mã Sách</th>
+                <th>Tên Sách</th>
+                <th>Doanh Thu</th>
             </tr>
             {% for s in stats %}
                 <tr>
@@ -28,24 +34,33 @@
             {% endfor %}
         </table>
     </div>
-    <div class="col-md-6">
-        <h1>Báo cáo theo danh thu</h1>
-        <table class="table">
-            <tr>
-                <th>Mã Danh Mục</th>
-                <th>Tên Danh Mục</th>
-                <th>Doanh Thu</th>
-            </tr>
-            {% for s in stat %}
-                <tr>
-                    <td>{{s[0]}}</td>
-                    <td>{{s[1]}}</td>
-                    <td>{{s[2]}}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
 </div>
+<script>
+window.onload = function() {
+  searchBox = document.getElementById("search-box");
+  if(searchBox.value == "None"){
+        searchBox.value = ""
+        console.log("ok")
+      }
+  kw ='{{kw}}'
+  searchButton = document.getElementById("search-btn");
+  resetButton = document.getElementById("reset-btn");
+  resetButton.style.display = "none";
+  if(kw == "" || searchBox.value == ""){
+    resetButton.style.display = "none";
+    searchBox.value = ""
+  }
+  else{
+    resetButton.style.display = "block";
+  };
+  resetButton.addEventListener("click", function(){
+    searchBox.value=""
+    console.log(searchBox.value)
+  });
+  searchButton.addEventListener("click", function() {
+  })
+}
+</script>
 <style>
     .search-bar-container {
     display: flex;

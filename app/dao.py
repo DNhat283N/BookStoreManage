@@ -108,8 +108,3 @@ def stats_revenue_by_month(year=2024):
                      .join(BillDetail, BillDetail.Bill_ID.__eq__(Bill.Bill_ID))\
                      .filter(func.extract('year', Bill.Order_Date).__eq__(year))\
                      .group_by(func.extract('month', Bill.Order_Date)).all()
-
-
-if __name__ == '__main__':
-    with app.app_context():
-        print(stats_revenue(kwd="Phía sau nghi can x"))

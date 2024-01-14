@@ -30,17 +30,19 @@ class BookView(AuthenticatedAdminView):
 class TableStatsView(AuthenticatedUserView):
     @expose('/')
     def index(self):
-        kwd = request.args.get('kw')
-        stats_data = dao.count_products_by_cate()
-        return self.render('admin/stats_with_table.html', stats=stats_data, stat=dao.stats_revenue(kwd))
+        kwd = request.args.get('kwd')
+        if kwd:
+            return self.render('admin/stats_with_table.html', stats=dao.stats_revenue(kwd), kw=kwd)
+        return self.render('admin/stats_with_table.html', stats=dao.stats_revenue(kwd), kw="")
 
 
 class ChartStatsView(AuthenticatedUserView):
     @expose('/')
     def index(self):
-        kwd = request.args.get('kw')
-        stats_data = dao.count_products_by_cate()
-        return self.render('admin/stats_with_chart.html', stats=stats_data, stat=dao.stats_revenue(kwd))
+        kwd = request.args.get('kwd')
+        if kwd:
+            return self.render('admin/stats_with_chart.html', stats=dao.stats_revenue(kwd), kw=kwd)
+        return self.render('admin/stats_with_chart.html', stats=dao.stats_revenue(kwd), kw="")
 
 
 class LogOutView(AuthenticatedUserView):
@@ -56,7 +58,6 @@ class ConfigView(AuthenticatedAdminView):
 
 stats_category = menu.MenuCategory('Statistic', class_name='dropdown')
 
-
 admin = Admin(app=app, name='Quản Trị Bán Hàng Nhà Sách', template_mode='bootstrap4')
 admin.add_view(CategoryView(Category, db.session))
 admin.add_view(BookView(Book, db.session))
@@ -68,3 +69,6 @@ admin.add_view(ChartStatsView(name="Chart Format", category='Statistic'))
 
 admin.add_view(LogOutView(name="Log Out"))
 
+if __name__ == '__main__':
+    with app.app_context():
+        print(dao.stats_revenue())
