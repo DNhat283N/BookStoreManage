@@ -1,7 +1,6 @@
 import enum
 import hashlib
 from datetime import datetime
-
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Enum, CHAR, Date, DateTime
 from sqlalchemy.orm import relationship
@@ -224,7 +223,7 @@ if __name__ == "__main__":
 
         u1 = Account(Name=' Admin ', Username="admin",
                      Password=str(hashlib.md5('12345'.encode('utf-8')).hexdigest()),
-                     User_Role=UserRoleEnum.STAFF, Staff_ID = 1)
+                     User_Role=UserRoleEnum.ADMIN, Staff_ID = 1)
         db.session.add_all([u1])
         db.session.commit()
 
