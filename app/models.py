@@ -120,6 +120,11 @@ class DeliveryAddress(db.Model):
     delivery_of_customer = relationship('DeliveryOfCustomer', backref='address', lazy=True)
 
 
+class CreateDate(db.Model):
+    __abstract__ = True
+    Order_Date = Column(DateTime, default=datetime.now())
+
+
 class DeliveryOfCustomer(db.Model):
     DOC_ID = Column(Integer, primary_key=True, autoincrement=True)
 
@@ -127,7 +132,7 @@ class DeliveryOfCustomer(db.Model):
     Customer_ID = Column(CHAR(12), ForeignKey(Customer.Customer_ID), nullable=False)
 
 
-class Bill(db.Model):
+class Bill(CreateDate):
     __tablename__ = 'Bill'
     Bill_ID = Column(Integer, primary_key=True, autoincrement=True)
     Book_Receive_At = Column(String(50), nullable=False)
@@ -136,12 +141,11 @@ class Bill(db.Model):
     bill_detail = relationship('BillDetail', backref='bill', lazy=True)
 
 
-class BillDetail(db.Model):
+class BillDetail(CreateDate):
     __tablename_ = 'BillDetail'
     Bill_Detail_ID = Column(Integer, primary_key=True, autoincrement=True)
     Quantity = Column(Integer, nullable=False, default=0)
     Total_Amount = Column(Integer, nullable=True)
-    Order_Date = Column(DateTime, default=datetime.now())
 
     Bill_ID = Column(Integer, ForeignKey(Bill.Bill_ID), nullable=False)
     Book_ID = Column(Integer, ForeignKey(Book.Book_ID), nullable=False)

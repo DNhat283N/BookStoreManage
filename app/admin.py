@@ -1,9 +1,9 @@
-from flask import redirect
-from flask_admin import Admin, BaseView, expose, menu
+from flask import redirect, request, render_template
+from flask_admin import Admin, BaseView, expose, menu, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_login import logout_user, current_user
 
-from app import app, db
+from app import app, db, dao
 from app.models import Category, Book, UserRoleEnum, BookConfig
 
 
@@ -30,13 +30,17 @@ class BookView(AuthenticatedAdminView):
 class TableStatsView(AuthenticatedUserView):
     @expose('/')
     def index(self):
-        return self.render('admin/stats_with_table.html')
+        kwd = request.args.get('kw')
+        stats_data = dao.count_products_by_cate()
+        return self.render('admin/stats_with_table.html', stats=stats_data, stat=dao.stats_revenue(kwd))
 
 
 class ChartStatsView(AuthenticatedUserView):
     @expose('/')
     def index(self):
-        return self.render('admin/stats_with_chart.html')
+        kwd = request.args.get('kw')
+        stats_data = dao.count_products_by_cate()
+        return self.render('admin/stats_with_chart.html', stats=stats_data, stat=dao.stats_revenue(kwd))
 
 
 class LogOutView(AuthenticatedUserView):

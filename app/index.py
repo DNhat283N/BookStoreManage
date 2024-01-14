@@ -26,6 +26,7 @@ def index():
     return render_template('index.html', pages=math.ceil(num / page_size), produces=pro)
 
 
+
 @app.route('/admin/login', methods=['post'])
 def admin_login():
     username = request.form.get('username')
@@ -231,14 +232,6 @@ def common_responses():
         'categories': dao.get_category(),
         'cart_stats': utils.count_cart(session.get('cart'))
     }
-
-
-# @app.route('/user-login', methods=['get', 'post'])
-# def user_signin():
-#     if request.method.__eq__('POST'):
-#         username = request.form.get('username')
-#         password = request.form.get('password')
-#     return render_template('login.html')
 
 
 if __name__ == '__main__':

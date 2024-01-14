@@ -87,3 +87,29 @@ def add_bill(cart, delivery_method, customer_id):
         print(f"Lỗi trong quá trình thêm hóa đơn: {str(e)}")
         return False
 
+
+def count_products_by_cate():
+    return db.session.query(Category.Category_ID, Category.Category_Name, func.count(Book.Book_ID))\
+                     .join(Book, Book.Category_ID.__eq__(Category.Category_ID), isouter=True)\
+                     .group_by(Category.Category_ID).all()
+
+
+def stats_revenue(kwd=None):
+    query = db.session.query(Book.Book_ID, Book.BookName, func.sum(BillDetail.Total_Amount*BillDetail.Quantity))\
+        .join(BillDetail, BillDetail.Book_ID.__eq__(Book.Book_ID))
+    if kwd:
+        query = query.filter(Book.BookName.contains(kwd))
+
+    return query.group_by(Book.Book_ID).all()
+
+
+def stats_revenue_by_month(year=2024):
+    return db.session.query(func.extract('month', Bill.Order_Date), func.sum(BillDetail.Quantity*BillDetail.Total_Amount))\
+                     .join(BillDetail, BillDetail.Bill_ID.__eq__(Bill.Bill_ID))\
+                     .filter(func.extract('year', Bill.Order_Date).__eq__(year))\
+                     .group_by(func.extract('month', Bill.Order_Date)).all()
+
+
+if __name__ == '__main__':
+    with app.app_context():
+        print(stats_revenue(kwd="Phía sau nghi can x"))
